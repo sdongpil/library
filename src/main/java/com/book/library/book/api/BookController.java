@@ -33,7 +33,6 @@ public class BookController {
 
     @PutMapping("/books/{id}")
     public ResponseEntity<BookResponseDto> update(@PathVariable Long id, @RequestBody BookRequestDto bookRequestDto) {
-
         BookRequest request = BookRequest.toRequest(bookRequestDto);
 
         BookResponse bookResponse = bookService.update(id, request);
@@ -45,5 +44,12 @@ public class BookController {
                 .build();
 
         return ResponseEntity.status(HttpStatus.OK).body(bookResponseDto);
+    }
+
+    @PostMapping("/books/{bookId}/rent")
+    public ResponseEntity<?> rent(@PathVariable Long bookId, @PathVariable Long memberId) {
+        bookService.rent(bookId, memberId);
+
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }
