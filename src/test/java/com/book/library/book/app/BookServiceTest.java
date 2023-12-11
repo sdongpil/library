@@ -1,12 +1,19 @@
 package com.book.library.book.app;
 
 import com.book.library.book.domain.Book;
+import com.book.library.book.domain.BookRent;
+import com.book.library.book.repository.BookRentRepository;
 import com.book.library.book.repository.BookRepository;
+import com.book.library.member.domain.Member;
+import com.book.library.member.repository.MemberRepository;
 import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,6 +27,28 @@ class BookServiceTest {
 
     @Autowired
     private BookRepository bookRepository;
+
+    @Autowired
+    private MemberRepository memberRepository;
+
+    @Autowired
+    private BookRentRepository bookRentRepository;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+
+    @BeforeEach
+    void setup() {
+        jdbcTemplate.execute("ALTER TABLE member ALTER COLUMN id RESTART WITH 1");
+        jdbcTemplate.execute("ALTER TABLE book ALTER COLUMN id RESTART WITH 1");
+    }
+
+    @AfterEach
+    void deleteAll() {
+        bookRepository.deleteAllInBatch();
+        memberRepository.deleteAllInBatch();
+    }
 
     @Test
     @Transactional
@@ -53,6 +82,29 @@ class BookServiceTest {
         assertThat(bookResponse.author()).isEqualTo("이상민2");
     }
 
+    @Test
+    @Transactional
+    @DisplayName("bookId, memberId 유효하면 대여 성공")
+    void t3() {
+        saveBook();
+        saveMember();
+
+        bookService.rent(1L, 1L);
+        BookRent bookRent = bookRentRepository.findById(1L).orElseThrow();
+
+        assertThat(bookRent.getBookId()).isEqualTo(1L);
+    }
+
+    private void saveMember() {
+        memberRepository.save(Member.builder()
+                .memberId("sdp")
+                .password("1234")
+                .name("dongpil")
+                .age(30)
+                .email("pildong@naver.com")
+                .phoneNumber(010)
+                .build());
+    }
 
     private void saveBook() {
         Book book = Book.builder()

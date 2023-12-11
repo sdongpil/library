@@ -2,15 +2,20 @@ package com.book.library.book.api;
 
 import com.book.library.book.domain.Book;
 import com.book.library.book.repository.BookRepository;
+import com.book.library.member.domain.Member;
+import com.book.library.member.repository.MemberRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -32,6 +37,23 @@ class BookControllerTest {
 
     @Autowired
     private BookRepository bookRepository;
+
+    @Autowired
+    private MemberRepository memberRepository;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    @BeforeEach
+    void setup() {
+        jdbcTemplate.execute("ALTER TABLE member ALTER COLUMN id RESTART WITH 1");
+        jdbcTemplate.execute("ALTER TABLE book ALTER COLUMN id RESTART WITH 1");    }
+
+    @AfterEach
+    void deleteAll() {
+        bookRepository.deleteAllInBatch();
+        memberRepository.deleteAllInBatch();
+    }
 
     @Transactional
     @DisplayName(value = "도서 저장")
@@ -70,6 +92,32 @@ class BookControllerTest {
                 .andExpect(jsonPath("$.author").value("이상민"))
                 .andExpect(jsonPath("$.description").value("쉽게 자바를 공부해보자"))
         ;
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("도서 id, 회원 id 유효하면 도서 대출 성공")
+    void t3() throws Exception {
+        saveBook();
+        saveMember();
+
+        Long bookId = 1L;
+        Long memberId = 1L;
+
+        mockMvc.perform(post("/api/books/{bookId}/rent", bookId).param("memberId",memberId.toString()))
+                .andExpect(status().isCreated())
+        ;
+    }
+
+    private void saveMember() {
+        memberRepository.save(Member.builder()
+                .memberId("sdp")
+                .password("1234")
+                .name("dongpil")
+                .age(30)
+                .email("pildong@naver.com")
+                .phoneNumber(010)
+                .build());
     }
 
     private void saveBook() {

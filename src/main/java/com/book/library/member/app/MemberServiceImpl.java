@@ -2,6 +2,7 @@ package com.book.library.member.app;
 
 import com.book.library.member.domain.Member;
 import com.book.library.member.repository.MemberRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +13,7 @@ public class MemberServiceImpl implements MemberService{
     private final MemberRepository memberRepository;
 
     @Override
+    @Transactional
     public MemberResponse join(MemberRequest memberRequest) {
         // TODO: 12/7/23 회원 중복체크
 
@@ -20,6 +22,8 @@ public class MemberServiceImpl implements MemberService{
         memberRepository.save(member);
 
         return MemberResponse.builder()
+                .memberId(member.getMemberId())
+                .password(member.getPassword())
                 .name(member.getName())
                 .email(member.getEmail())
                 .phoneNumber(member.getPhoneNumber())
