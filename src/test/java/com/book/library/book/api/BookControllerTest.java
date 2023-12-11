@@ -2,15 +2,20 @@ package com.book.library.book.api;
 
 import com.book.library.book.domain.Book;
 import com.book.library.book.repository.BookRepository;
+import com.book.library.member.domain.Member;
+import com.book.library.member.repository.MemberRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -32,6 +37,23 @@ class BookControllerTest {
 
     @Autowired
     private BookRepository bookRepository;
+
+    @Autowired
+    private MemberRepository memberRepository;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    @BeforeEach
+    void setup() {
+        jdbcTemplate.execute("ALTER TABLE member ALTER COLUMN id RESTART WITH 1");
+        jdbcTemplate.execute("ALTER TABLE book ALTER COLUMN id RESTART WITH 1");    }
+
+    @AfterEach
+    void deleteAll() {
+        bookRepository.deleteAllInBatch();
+        memberRepository.deleteAllInBatch();
+    }
 
     @Transactional
     @DisplayName(value = "도서 저장")
