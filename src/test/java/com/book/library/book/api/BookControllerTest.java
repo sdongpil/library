@@ -72,6 +72,32 @@ class BookControllerTest {
         ;
     }
 
+    @Test
+    @Transactional
+    @DisplayName("도서 id, 회원 id 유효하면 도서 대출 성공")
+    void t3() throws Exception {
+        saveBook();
+        saveMember();
+
+        Long bookId = 1L;
+        Long memberId = 1L;
+
+        mockMvc.perform(post("/api/books/{bookId}/rent", bookId).param("memberId",memberId.toString()))
+                .andExpect(status().isCreated())
+        ;
+    }
+
+    private void saveMember() {
+        memberRepository.save(Member.builder()
+                .memberId("sdp")
+                .password("1234")
+                .name("dongpil")
+                .age(30)
+                .email("pildong@naver.com")
+                .phoneNumber(010)
+                .build());
+    }
+
     private void saveBook() {
         Book book = Book.builder()
                 .name("자바의 신")
