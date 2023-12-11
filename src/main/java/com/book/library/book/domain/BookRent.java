@@ -21,14 +21,14 @@ public class BookRent {
 
     private Long bookId;
 
-    private Long memberId;
+    private String memberId;
 
     private LocalDateTime rentalDate;
 
     private LocalDateTime returnDate;
 
     @Builder
-    public BookRent(Long bookId, Long memberId, LocalDateTime rentalDate, LocalDateTime returnDate) {
+    public BookRent(Long bookId, String memberId, LocalDateTime rentalDate, LocalDateTime returnDate) {
         this.bookId = bookId;
         this.memberId = memberId;
         this.rentalDate = rentalDate;

@@ -62,7 +62,7 @@ public class BookServiceImpl implements BookService{
 
         BookRent bookRent = BookRent.builder()
                 .bookId(book.getId())
-                .memberId(member.getId())
+                .memberId(member.getMemberId())
                 .rentalDate(LocalDateTime.now())
                 .build();
 

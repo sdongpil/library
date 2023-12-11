@@ -47,7 +47,7 @@ public class BookController {
     }
 
     @PostMapping("/books/{bookId}/rent")
-    public ResponseEntity<?> rent(@PathVariable Long bookId, @PathVariable Long memberId) {
+    public ResponseEntity<Object> rent(@PathVariable Long bookId, @RequestParam Long memberId) {
         bookService.rent(bookId, memberId);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
