@@ -1,7 +1,11 @@
 package com.book.library.book.app;
 
 import com.book.library.book.domain.Book;
+import com.book.library.book.domain.BookRent;
+import com.book.library.book.repository.BookRentRepository;
 import com.book.library.book.repository.BookRepository;
+import com.book.library.member.domain.Member;
+import com.book.library.member.repository.MemberRepository;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,6 +24,12 @@ class BookServiceTest {
 
     @Autowired
     private BookRepository bookRepository;
+
+    @Autowired
+    private MemberRepository memberRepository;
+
+    @Autowired
+    private BookRentRepository bookRentRepository;
 
     @Test
     @Transactional
@@ -53,6 +63,27 @@ class BookServiceTest {
         assertThat(bookResponse.author()).isEqualTo("이상민2");
     }
 
+    @Test
+    @Transactional
+    @DisplayName("bookId, memberId 유효하면 대여 성공")
+    void t3() {
+        saveBook();
+        saveMember();
+
+        bookService.rent(1L, 1L);
+        BookRent bookRent = bookRentRepository.findById(1L).orElseThrow();
+
+        assertThat(bookRent.getBookId()).isEqualTo(1L);
+    }
+
+    private void saveMember() {
+        memberRepository.save(Member.builder()
+                .name("dongpil")
+                .age(30)
+                .email("pildong@naver.com")
+                .phoneNumber(010)
+                .build());
+    }
 
     private void saveBook() {
         Book book = Book.builder()
