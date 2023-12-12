@@ -52,4 +52,11 @@ public class BookController {
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
+
+    @PostMapping("/books/{bookId}/return")
+    public ResponseEntity<Object> returnBook(@PathVariable Long bookId, @RequestParam Long memberId) {
+        bookService.returnBook(bookId, memberId);
+
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
 }
