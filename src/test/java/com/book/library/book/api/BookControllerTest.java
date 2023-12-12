@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -71,6 +72,7 @@ class BookControllerTest {
         String requestBody = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(bookRequestDto);
 
         mockMvc.perform(post("/api/books").contentType(MediaType.APPLICATION_JSON).content(requestBody))
+                .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name").value("모던자바인액션"));
     }
@@ -90,6 +92,7 @@ class BookControllerTest {
         String requestBody = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(bookRequestDto);
 
         mockMvc.perform(put("/api/books/{id}",bookId).contentType(MediaType.APPLICATION_JSON).content(requestBody))
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("자바의 신2"))
                 .andExpect(jsonPath("$.author").value("이상민"))
@@ -108,8 +111,8 @@ class BookControllerTest {
         Long memberId = 1L;
 
         mockMvc.perform(post("/api/books/{bookId}/rent", bookId).param("memberId",memberId.toString()))
-                .andExpect(status().isCreated())
-        ;
+                .andDo(print())
+                .andExpect(status().isCreated());
     }
 
     @Test
@@ -124,6 +127,7 @@ class BookControllerTest {
         Long memberId = 1L;
 
         mockMvc.perform(post("/api/books/{bookId}/return", bookId).param("memberId",memberId.toString()))
+                .andDo(print())
                 .andExpect(status().isOk());
     }
 

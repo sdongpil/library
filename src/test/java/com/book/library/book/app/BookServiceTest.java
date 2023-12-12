@@ -4,6 +4,7 @@ import com.book.library.book.domain.Book;
 import com.book.library.book.domain.BookRent;
 import com.book.library.book.repository.BookRentRepository;
 import com.book.library.book.repository.BookRepository;
+import com.book.library.exception.BookRentNotFoundException;
 import com.book.library.member.domain.Member;
 import com.book.library.member.repository.MemberRepository;
 import jakarta.transaction.Transactional;
@@ -17,6 +18,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -92,7 +94,7 @@ class BookServiceTest {
         saveMember();
 
         bookService.rent(1L, 1L);
-        BookRent bookRent = bookRentRepository.findById(1L).orElseThrow();
+        BookRent bookRent = bookRentRepository.findById(1L).orElseThrow(BookRentNotFoundException::new);
 
         assertThat(bookRent.getBookId()).isEqualTo(1L);
     }
@@ -107,9 +109,21 @@ class BookServiceTest {
 
         bookService.returnBook(1L,1L);
 
-        BookRent bookRent = bookRentRepository.findById(1L).orElseThrow();
+        BookRent bookRent = bookRentRepository.findById(1L).orElseThrow(BookRentNotFoundException::new);
 
         assertThat(bookRent.getReturnDate()).isNotNull();
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("대출한 도서가 없으면 예외 발생 , 메세지 출력")
+    void t5() {
+        saveBook();
+        saveMember();
+
+        assertThatThrownBy(() -> bookService.returnBook(1L, 1L))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessage("대출한 도서가 없습니다.");
     }
 
     private void saveMember() {

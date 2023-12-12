@@ -1,6 +1,9 @@
 package com.book.library.member.app;
 
+import com.book.library.exception.DuplicateMemberException;
+import com.book.library.member.domain.Member;
 import com.book.library.member.repository.MemberRepository;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -11,9 +14,11 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 @ActiveProfiles("test")
+@Transactional
 class MemberServiceTest {
 
     @Autowired
@@ -52,5 +57,35 @@ class MemberServiceTest {
         MemberResponse memberResponse = memberService.join(memberRequest);
 
         assertThat(memberResponse.name()).isEqualTo("dongpil");
+    }
+
+    @Test
+    @DisplayName("중복된 회원일 경우 DuplicateMemberException 예외 발생")
+    void t2() {
+        saveMember();
+
+        MemberRequest memberRequest = MemberRequest.builder()
+                .memberId("sdp")
+                .password("123")
+                .email("pildong@naver.com")
+                .name("dongpil")
+                .age(30)
+                .phoneNumber(010)
+                .build();
+
+        assertThatThrownBy(() -> memberService.join(memberRequest))
+                .isInstanceOf(DuplicateMemberException.class)
+                .hasMessage("이미 존재하는 회원 ID입니다.");
+    }
+
+    private void saveMember() {
+        memberRepository.save(Member.builder()
+                .memberId("sdp")
+                .password("1234")
+                .name("dongpil")
+                .age(30)
+                .email("pildong@naver.com")
+                .phoneNumber(010)
+                .build());
     }
 }
