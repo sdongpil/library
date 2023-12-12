@@ -42,12 +42,14 @@ class BookServiceTest {
     void setup() {
         jdbcTemplate.execute("ALTER TABLE member ALTER COLUMN id RESTART WITH 1");
         jdbcTemplate.execute("ALTER TABLE book ALTER COLUMN id RESTART WITH 1");
+        jdbcTemplate.execute("ALTER TABLE book_rent ALTER COLUMN id RESTART WITH 1");
     }
 
     @AfterEach
     void deleteAll() {
         bookRepository.deleteAllInBatch();
         memberRepository.deleteAllInBatch();
+        bookRentRepository.deleteAllInBatch();
     }
 
     @Test
