@@ -31,9 +31,9 @@ jobs:
           restore-keys: |
             gradle-
       - name: Build
-        run: ./gradlew build
+        run: gradle build
       - name: Run Tests
-        run: ./gradlew test
+        run: gradle test
       - name: Upload Test Results
         uses: actions/upload-artifact@v2
         with:
