@@ -114,6 +114,18 @@ class BookServiceTest {
         assertThat(bookRent.getReturnDate()).isNotNull();
     }
 
+    @Test
+    @Transactional
+    @DisplayName("대출한 도서가 없으면 예외 발생 , 메세지 출력")
+    void t5() {
+        saveBook();
+        saveMember();
+
+        assertThatThrownBy(() -> bookService.returnBook(1L, 1L))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessage("대출한 도서가 없습니다.");
+    }
+
     private void saveMember() {
         memberRepository.save(Member.builder()
                 .memberId("sdp")
