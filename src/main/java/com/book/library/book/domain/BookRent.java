@@ -34,4 +34,8 @@ public class BookRent {
         this.rentalDate = rentalDate;
         this.returnDate = returnDate;
     }
+
+    public void returnBook() {
+        this.returnDate = LocalDateTime.now();
+    }
 }
