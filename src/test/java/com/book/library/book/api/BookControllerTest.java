@@ -1,10 +1,10 @@
 package com.book.library.book.api;
 
+import com.book.library.book.app.BookService;
 import com.book.library.book.domain.Book;
 import com.book.library.book.repository.BookRepository;
 import com.book.library.member.domain.Member;
 import com.book.library.member.repository.MemberRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.AfterEach;
@@ -43,6 +43,9 @@ class BookControllerTest {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    private BookService bookService;
 
     @BeforeEach
     void setup() {
@@ -107,6 +110,21 @@ class BookControllerTest {
         mockMvc.perform(post("/api/books/{bookId}/rent", bookId).param("memberId",memberId.toString()))
                 .andExpect(status().isCreated())
         ;
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("도서 id, 회원 id 유효하면 도서 반납 성공")
+    void t4() throws Exception {
+        saveBook();
+        saveMember();
+        bookService.rent(1L, 1L);
+
+        Long bookId = 1L;
+        Long memberId = 1L;
+
+        mockMvc.perform(post("/api/books/{bookId}/return", bookId).param("memberId",memberId.toString()))
+                .andExpect(status().isOk());
     }
 
     private void saveMember() {
