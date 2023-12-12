@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -67,5 +68,23 @@ public class BookServiceImpl implements BookService{
                 .build();
 
         bookRentRepository.save(bookRent);
+    }
+
+    @Override
+    @Transactional
+    public void returnBook(Long bookId, Long memberId) {
+        Book book = bookRepository.findById(bookId).orElseThrow();
+        Member member = memberRepository.findById(memberId).orElseThrow();
+
+        List<BookRent> bookRents = bookRentRepository.findAllByMemberId(member.getMemberId());
+        if (bookRents.size() == 0) {
+            throw new IllegalStateException("대출한 도서가 없습니다.");
+        }
+
+        for (BookRent bookRent : bookRents) {
+            if (bookRent.getBookId().equals(book.getId()) && bookRent.getMemberId().equals(member.getMemberId())) {
+                bookRent.returnBook();
+            }
+        }
     }
 }
