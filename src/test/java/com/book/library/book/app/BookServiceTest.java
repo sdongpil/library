@@ -95,6 +95,21 @@ class BookServiceTest {
         assertThat(bookRent.getBookId()).isEqualTo(1L);
     }
 
+    @Test
+    @Transactional
+    @DisplayName("회원아이디와 도서아이디 유효하면 도서 반납 성공")
+    void t4() {
+        saveBook();
+        saveMember();
+//        bookService.rent(1L,1L);
+
+        bookService.returnBook(1L,1L);
+
+        BookRent bookRent = bookRentRepository.findById(1L).orElseThrow();
+
+        assertThat(bookRent.getReturnDate()).isNotNull();
+    }
+
     private void saveMember() {
         memberRepository.save(Member.builder()
                 .memberId("sdp")
