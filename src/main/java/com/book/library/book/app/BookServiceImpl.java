@@ -78,15 +78,20 @@ public class BookServiceImpl implements BookService {
         Book book = bookRepository.findById(bookId).orElseThrow(BookNotFoundException::new);
         Member member = memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
 
-        List<BookRent> bookRents = bookRentRepository.findAllByMemberId(member.getMemberId());
-        if (bookRents.size() == 0) {
-            throw new IllegalStateException("대출한 도서가 없습니다.");
-        }
+        List<BookRent> bookRents = bookRentValidate(member);
 
         for (BookRent bookRent : bookRents) {
             if (bookRent.getBookId().equals(book.getId()) && bookRent.getMemberId().equals(member.getMemberId())) {
                 bookRent.returnBook();
             }
         }
+    }
+
+    private List<BookRent> bookRentValidate(Member member) {
+        List<BookRent> bookRents = bookRentRepository.findAllByMemberId(member.getMemberId());
+        if (bookRents.isEmpty()) {
+            throw new BookRentNotFoundException();
+        }
+        return bookRents;
     }
 }
