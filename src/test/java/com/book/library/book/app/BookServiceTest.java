@@ -101,7 +101,7 @@ class BookServiceTest {
     void t4() {
         saveBook();
         saveMember();
-//        bookService.rent(1L,1L);
+        bookService.rent(1L,1L);
 
         bookService.returnBook(1L,1L);
 
