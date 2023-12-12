@@ -1,5 +1,6 @@
 package com.book.library.member.app;
 
+import com.book.library.exception.DuplicateMemberException;
 import com.book.library.member.domain.Member;
 import com.book.library.member.repository.MemberRepository;
 import jakarta.transaction.Transactional;
@@ -15,7 +16,9 @@ public class MemberServiceImpl implements MemberService{
     @Override
     @Transactional
     public MemberResponse join(MemberRequest memberRequest) {
-        // TODO: 12/7/23 회원 중복체크
+        if (memberDuplicateCheck(memberRequest.memberId())) {
+            throw new DuplicateMemberException();
+        }
 
         Member member = Member.toDomain(memberRequest);
 
@@ -29,5 +32,9 @@ public class MemberServiceImpl implements MemberService{
                 .phoneNumber(member.getPhoneNumber())
                 .age(member.getAge())
                 .build();
+    }
+
+    private boolean memberDuplicateCheck(String memberId) {
+        return memberRepository.existsByMemberId(memberId);
     }
 }

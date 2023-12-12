@@ -4,6 +4,9 @@ import com.book.library.book.domain.Book;
 import com.book.library.book.domain.BookRent;
 import com.book.library.book.repository.BookRentRepository;
 import com.book.library.book.repository.BookRepository;
+import com.book.library.exception.BookNotFoundException;
+import com.book.library.exception.BookRentNotFoundException;
+import com.book.library.exception.MemberNotFoundException;
 import com.book.library.member.domain.Member;
 import com.book.library.member.repository.MemberRepository;
 import jakarta.transaction.Transactional;
@@ -15,7 +18,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class BookServiceImpl implements BookService{
+public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
     private final MemberRepository memberRepository;
@@ -39,7 +42,7 @@ public class BookServiceImpl implements BookService{
     @Override
     @Transactional
     public BookResponse update(Long id, BookRequest bookRequest) {
-        Book book = bookRepository.findById(id).orElseThrow(IllegalStateException::new);
+        Book book = bookRepository.findById(id).orElseThrow(BookNotFoundException::new);
 
         book.setName(bookRequest.name());
         book.setAuthor(bookRequest.author());
@@ -57,9 +60,8 @@ public class BookServiceImpl implements BookService{
     @Override
     @Transactional
     public void rent(Long bookId, Long memberId) {
-        Book book = bookRepository.findById(bookId).orElseThrow();
-        Member member = memberRepository.findById(memberId).orElseThrow();
-        // TODO: 12/11/23 대여 이력이 있는지 검증하기
+        Book book = bookRepository.findById(bookId).orElseThrow(BookNotFoundException::new);
+        Member member = memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
 
         BookRent bookRent = BookRent.builder()
                 .bookId(book.getId())
@@ -73,8 +75,8 @@ public class BookServiceImpl implements BookService{
     @Override
     @Transactional
     public void returnBook(Long bookId, Long memberId) {
-        Book book = bookRepository.findById(bookId).orElseThrow();
-        Member member = memberRepository.findById(memberId).orElseThrow();
+        Book book = bookRepository.findById(bookId).orElseThrow(BookNotFoundException::new);
+        Member member = memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
 
         List<BookRent> bookRents = bookRentRepository.findAllByMemberId(member.getMemberId());
         if (bookRents.size() == 0) {
