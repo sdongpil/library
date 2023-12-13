@@ -4,14 +4,7 @@
 ## 사용 기술
 - Java 17, Spring Framwork, Spring Boot, MYSQL, H2DB, JPA, Gradle 
 
-
-## DB ERD
-외래키 미사용 설계 DB
-<br>
-<img width="602" alt="erd" src="https://github.com/MuinMusic/MuinMusic/assets/112970256/003d5f71-9f6f-4e90-9977-4f439977258b">
-
-
-### POST /api/members  : 회원가입
+## POST /api/members  : 회원가입
 - **Request**
   ```json
   {
@@ -41,7 +34,7 @@
 
 <br>
 
-### POST /api/books: 도서 등록
+## POST /api/books: 도서 등록
 - **Request**
   ```json
   {
@@ -67,7 +60,7 @@
   
 <br>
 
-### POST /api/books/{id} : 도서 수정
+## POST /api/books/{id} : 도서 수정
 - **Request**
   ```json
   {
@@ -93,7 +86,7 @@
   
 <br>
 
-### POST /api/books/{booId}/rent : 도서 대출
+## POST /api/books/{booId}/rent : 도서 대출
 - **Request**
   ```json
    PathVariable: Long bookId, 
@@ -107,7 +100,7 @@
   }
 <br>
 
-### POST /api/books/{booId}/return : 도서 반납
+## POST /api/books/{booId}/return : 도서 반납
 - **Request**
   ```json
    PathVariable: Long bookId, 
@@ -121,7 +114,7 @@
   }
 <br>
 
-### GET /api/books/{memberId} : 도서 대출이력 확인
+## GET /api/books/{memberId} : 도서 대출이력 확인
 - **Request**
   ```json
    PathVariable: String memberId
@@ -141,6 +134,8 @@
   
 <br>
 
-
-
+## DB ERD
+외래키 미사용 설계 DB
+<br>
+<img width="602" alt="erd" src="https://github.com/MuinMusic/MuinMusic/assets/112970256/003d5f71-9f6f-4e90-9977-4f439977258b">
 
