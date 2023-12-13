@@ -19,22 +19,22 @@ public class Book {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    private String title;
 
     private String author;
 
     private String description;
 
     @Builder
-    public Book(String name, String author, String description) {
-        this.name = name;
+    public Book(String title, String author, String description) {
+        this.title = title;
         this.author = author;
         this.description = description;
     }
 
     public static Book toDomain(BookRequest request) {
         return Book.builder()
-                .name(request.name())
+                .title(request.title())
                 .description(request.description())
                 .author(request.author())
                 .build();

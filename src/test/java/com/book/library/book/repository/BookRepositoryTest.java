@@ -1,13 +1,12 @@
 package com.book.library.book.repository;
 
 import com.book.library.book.domain.Book;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -20,13 +19,13 @@ class BookRepositoryTest {
     void t1() {
 
         Book book = Book.builder()
-                .name("토비의 스프링")
+                .title("토비의 스프링")
                 .author("토비")
                 .description("스프링이란")
                 .build();
 
         Book saveBook = bookRepository.save(book);
 
-        assertThat(saveBook.getName()).isEqualTo("토비의 스프링");
+        assertThat(saveBook.getTitle()).isEqualTo("토비의 스프링");
     }
 }

@@ -65,7 +65,7 @@ class BookControllerTest {
     void t1() throws Exception {
         BookRequestDto bookRequestDto = BookRequestDto.builder()
                 .description("설명")
-                .name("모던자바인액션")
+                .title("모던자바인액션")
                 .author("1")
                 .build();
 
@@ -74,7 +74,7 @@ class BookControllerTest {
         mockMvc.perform(post("/api/books").contentType(MediaType.APPLICATION_JSON).content(requestBody))
                 .andDo(print())
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.name").value("모던자바인액션"));
+                .andExpect(jsonPath("$.title").value("모던자바인액션"));
     }
 
     @Test
@@ -85,7 +85,7 @@ class BookControllerTest {
         Long bookId = 1L;
         BookRequestDto bookRequestDto = BookRequestDto.builder()
                 .description("쉽게 자바를 공부해보자")
-                .name("자바의 신2")
+                .title("자바의 신2")
                 .author("이상민")
                 .build();
 
@@ -94,7 +94,7 @@ class BookControllerTest {
         mockMvc.perform(put("/api/books/{id}",bookId).contentType(MediaType.APPLICATION_JSON).content(requestBody))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("자바의 신2"))
+                .andExpect(jsonPath("$.title").value("자바의 신2"))
                 .andExpect(jsonPath("$.author").value("이상민"))
                 .andExpect(jsonPath("$.description").value("쉽게 자바를 공부해보자"))
         ;
@@ -144,7 +144,7 @@ class BookControllerTest {
 
     private void saveBook() {
         Book book = Book.builder()
-                .name("자바의 신")
+                .title("자바의 신")
                 .description("자바 책")
                 .author("")
                 .build();
