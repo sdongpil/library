@@ -27,6 +27,7 @@ public class BookServiceImpl implements BookService {
     @Override
     @Transactional
     public BookResponse save(BookRequest request) {
+        requiredValueValidate(request);
 
         Book book = Book.toDomain(request);
 
@@ -43,6 +44,7 @@ public class BookServiceImpl implements BookService {
     @Transactional
     public BookResponse update(Long id, BookRequest bookRequest) {
         Book book = bookRepository.findById(id).orElseThrow(BookNotFoundException::new);
+        requiredValueValidate(bookRequest);
 
         book.setTitle(bookRequest.title());
         book.setAuthor(bookRequest.author());
@@ -93,6 +95,12 @@ public class BookServiceImpl implements BookService {
         List<BookRent> bookRents = bookRentRepository.findAllByMemberId(memberId);
 
         return getBookRentResponseList(bookRents);
+    }
+
+    private static void requiredValueValidate(BookRequest bookRequest) {
+        if (bookRequest.title() == null || bookRequest.author() == null) {
+            throw new IllegalArgumentException("제목과 작가를 입력하세요.");
+        }
     }
 
     private List<BookRentResponse> getBookRentResponseList(List<BookRent> bookRents) {

@@ -4,7 +4,9 @@ import com.book.library.book.domain.Book;
 import com.book.library.book.domain.BookRent;
 import com.book.library.book.repository.BookRentRepository;
 import com.book.library.book.repository.BookRepository;
+import com.book.library.exception.BookNotFoundException;
 import com.book.library.exception.BookRentNotFoundException;
+import com.book.library.exception.MemberNotFoundException;
 import com.book.library.member.domain.Member;
 import com.book.library.member.repository.MemberRepository;
 import jakarta.transaction.Transactional;
@@ -149,7 +151,58 @@ class BookServiceTest {
                 );
     }
 
+    @Test
+    @Transactional
+    @DisplayName("도서가 없으면 BookNotFoundException 예외 발생 및 404 상태코드, 메세지 출력")
+    void t7() {
+        saveMember();
 
+        assertThatThrownBy(() -> bookService.rent(100L, 1L))
+                .isInstanceOf(BookNotFoundException.class)
+                .hasMessage("도서를 찾을 수 없습니다.");
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("도서 저장시 제목, 작가 값 없으면 예외 발생")
+    void t9() {
+        BookRequest bookRequest = BookRequest.builder()
+                .description("")
+                .author("조영호")
+                .build();
+
+        assertThatThrownBy(() -> bookService.save(bookRequest))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("제목과 작가를 입력 하세요.");
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("도서 수정 시 책 못찾을경우 BookNotFoundException 예외 발생")
+    void t10() {
+        saveBook();
+
+        BookRequest bookRequest = BookRequest.builder()
+                .title("자바의 신")
+                .description("자바 책")
+                .author("")
+                .build();
+
+        assertThatThrownBy(() -> bookService.update(-1L,bookRequest))
+                .isInstanceOf(BookNotFoundException.class)
+                .hasMessage("도서를 찾을 수 없습니다.");
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("도서 대여 시 유효하지 않은 회원일 경우 MemberNotFoundException 예외발생")
+    void t11() {
+        saveBook();
+
+        assertThatThrownBy(() -> bookService.rent(1L,-1L))
+                .isInstanceOf(MemberNotFoundException.class)
+                .hasMessage("회원을 찾을 수 없습니다.");
+    }
 
     private void saveMember() {
         memberRepository.save(Member.builder()
