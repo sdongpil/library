@@ -2,9 +2,9 @@ DROP TABLE IF EXISTS `book`;
 CREATE TABLE `book`
 (
     `id`          bigint NOT NULL AUTO_INCREMENT,
-    `author`      varchar(20) DEFAULT NULL,
+    `title`        varchar(255) DEFAULT NULL,
+    `author`      varchar(255) DEFAULT NULL,
     `description` varchar(255) DEFAULT NULL,
-    `name`        varchar(20) DEFAULT NULL,
     UNIQUE INDEX `UK_name` (`name`) ,
     PRIMARY KEY (`id`)
 );
@@ -29,7 +29,7 @@ CREATE TABLE `member`
     `name`         varchar(20) NOT NULL,
     `age`          int          NOT NULL,
     `phone_number` int          NOT NULL,
-    `email`        varchar(255) NOT NULL,
+    `email`        varchar(20) NOT NULL,
     UNIQUE INDEX `UK_member_id` (`member_id`) ,
     PRIMARY KEY (`id`)
 );
