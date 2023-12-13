@@ -19,6 +19,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -131,6 +132,28 @@ class BookControllerTest {
                 .andExpect(status().isOk());
     }
 
+    @Test
+    @Transactional
+    @DisplayName("회원아이디 유효할 경우 도서 대출 내역 가져오기")
+    void t5() throws Exception {
+        saveBook();
+        saveBook2();
+        saveMember();
+        bookService.rent(1L, 1L);
+        bookService.rent(2L, 1L);
+
+        String memberId = "sdp";
+
+        mockMvc.perform(get("/api/books/{memberId}", memberId))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(jsonPath("$[0].bookTitle").value("자바의 신"))
+                .andExpect(jsonPath("$[0].memberId").value("sdp"))
+                .andExpect(jsonPath("$[1].bookTitle").value("자바의 신2"))
+                .andExpect(jsonPath("$[1].memberId").value("sdp"));
+    }
+
     private void saveMember() {
         memberRepository.save(Member.builder()
                 .memberId("sdp")
@@ -145,6 +168,16 @@ class BookControllerTest {
     private void saveBook() {
         Book book = Book.builder()
                 .title("자바의 신")
+                .description("자바 책")
+                .author("")
+                .build();
+
+        bookRepository.save(book);
+    }
+
+    private void saveBook2() {
+        Book book = Book.builder()
+                .title("자바의 신2")
                 .description("자바 책")
                 .author("")
                 .build();
