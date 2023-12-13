@@ -7,6 +7,7 @@
 
 ## DB ERD
 외래키 미사용 설계 DB
+<br>
 <img width="602" alt="erd" src="https://github.com/MuinMusic/MuinMusic/assets/112970256/003d5f71-9f6f-4e90-9977-4f439977258b">
 
 
