@@ -4,7 +4,7 @@
 ## 사용 기술
 - Java 17, Spring Framwork, Spring Boot, MYSQL, H2DB, JPA, Gradle 
 
-## POST /api/members  : 회원가입
+#### POST /api/members  : 회원가입
 - **Request**
   ```json
   {
