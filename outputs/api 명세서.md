@@ -15,9 +15,16 @@
 - **Response**
   ```json
   { 
+     "member":{
+     "name": "손동필",
+     "age": 30,
+     "email": "pildong94@naver.com",
+     "phoneNumber": "010-2222-2222"
+    }
+  }
+    
     "code": 201,
     "message": "Created" 
-  }
 
 <br>
 
@@ -34,10 +41,17 @@
 
 - **Response**
   ```json
-  { 
+  {
+    "book": {
+      "name": "토비의 스프링",
+      "author": "이일민",
+      "description": ""
+    }
+  }
+
     "code": 201,
     "message": "Created" 
-  }
+  
 <br>
 
 ### POST /api/books/{id} : 도서 수정
@@ -53,10 +67,17 @@
 
 - **Response**
   ```json
-  { 
+  {
+    "book": {
+      "name": "토비의 스프링",
+      "author": "이일민",
+      "description": ""
+    }
+  }
+  
     "code": 200,
     "message": "Success" 
-  }
+  
 <br>
 
 ### POST /api/books/{booId}/rent : 도서 대출
@@ -94,10 +115,17 @@
 
 - **Response**
   ```json
-  { 
+  {
+      "bookTitle": "토비의 스프링",
+      "memberId": "이일민",
+      "rentalDate": "2023-12-13",
+      "returnDate": ""
+    
+  }
+
     "code": 200,
     "message": "Success" 
-  }
+  
 <br>
 
 
