@@ -88,6 +88,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    @Transactional
     public List<BookRentResponse> getBookRentHistory(String memberId) {
         List<BookRent> bookRents = bookRentRepository.findAllByMemberId(memberId);
 
