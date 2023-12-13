@@ -46,6 +46,18 @@ public class BookController {
         return ResponseEntity.status(HttpStatus.OK).body(bookResponseDto);
     }
 
+    @GetMapping("books/{memberId}")
+    public ResponseEntity<List<BookRentResponseDto>> getBookRentHistory(@PathVariable String memberId) {
+        List<BookRentResponse> bookRentResponses = bookService.getBookRentHistory(memberId);
+
+        System.out.println(bookRentResponses.get(0).bookTitle());
+
+        return ResponseEntity.status(HttpStatus.OK).body(
+                bookRentResponses.stream()
+                        .map(bookRentResponse -> BookRentResponseDto.toResponseDto(bookRentResponse))
+                        .toList());
+    }
+
     @PostMapping("/books/{bookId}/rent")
     public ResponseEntity<Object> rent(@PathVariable Long bookId, @RequestParam Long memberId) {
         bookService.rent(bookId, memberId);

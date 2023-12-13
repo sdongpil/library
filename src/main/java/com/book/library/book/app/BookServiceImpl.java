@@ -33,7 +33,7 @@ public class BookServiceImpl implements BookService {
         bookRepository.save(book);
 
         return BookResponse.builder()
-                .name(book.getName())
+                .title(book.getTitle())
                 .author(book.getAuthor())
                 .description(book.getDescription())
                 .build();
@@ -44,14 +44,14 @@ public class BookServiceImpl implements BookService {
     public BookResponse update(Long id, BookRequest bookRequest) {
         Book book = bookRepository.findById(id).orElseThrow(BookNotFoundException::new);
 
-        book.setName(bookRequest.name());
+        book.setTitle(bookRequest.title());
         book.setAuthor(bookRequest.author());
         book.setDescription(bookRequest.description());
 
         bookRepository.save(book);
 
         return BookResponse.builder()
-                .name(book.getName())
+                .title(book.getTitle())
                 .author(book.getAuthor())
                 .description(book.getDescription())
                 .build();
@@ -85,6 +85,21 @@ public class BookServiceImpl implements BookService {
                 bookRent.returnBook();
             }
         }
+    }
+
+    @Override
+    public List<BookRentResponse> getBookRentHistory(String memberId) {
+        List<BookRent> bookRents = bookRentRepository.findAllByMemberId(memberId);
+
+        return getBookRentResponseList(bookRents);
+    }
+
+    private List<BookRentResponse> getBookRentResponseList(List<BookRent> bookRents) {
+        return bookRents.stream()
+                .map(bookRent -> {
+                    Book book = bookRepository.findById(bookRent.getBookId()).orElseThrow();
+                    return BookRentResponse.toResponse(bookRent, book.getTitle());
+                }).toList();
     }
 
     private List<BookRent> bookRentValidate(Member member) {
