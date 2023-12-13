@@ -17,8 +17,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.tuple;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -59,7 +62,7 @@ class BookServiceTest {
     @DisplayName("BookRequest값 유효하면 도서 저장 성공")
     void t1() {
         BookRequest bookRequest = BookRequest.builder()
-                .name("객체지향의 사실과 오해")
+                .title("객체지향의 사실과 오해")
                 .description("")
                 .author("조영호")
                 .build();
@@ -76,7 +79,7 @@ class BookServiceTest {
         saveBook();
 
         BookRequest bookRequest = BookRequest.builder()
-                .name("자바의 신2")
+                .title("자바의 신2")
                 .author("이상민2")
                 .description("자바 책2")
                 .build();
@@ -122,9 +125,31 @@ class BookServiceTest {
         saveMember();
 
         assertThatThrownBy(() -> bookService.returnBook(1L, 1L))
-                .isInstanceOf(IllegalStateException.class)
+                .isInstanceOf(BookRentNotFoundException.class)
                 .hasMessage("대출한 도서가 없습니다.");
     }
+
+    @Test
+    @Transactional
+    @DisplayName("도서 대출 목록 가져오기")
+    void t6() {
+        saveBook();
+        saveBook2();
+        saveMember();
+        bookService.rent(1L,1L);
+        bookService.rent(2L,1L);
+
+        List<BookRentResponse> bookRentHistory = bookService.getBookRentHistory("sdp");
+
+        assertThat(bookRentHistory).hasSize(2)
+                .extracting("bookTitle", "memberId")
+                .containsExactlyInAnyOrder(
+                        tuple("자바의 신", "sdp"),
+                        tuple("자바의 신2", "sdp")
+                );
+    }
+
+
 
     private void saveMember() {
         memberRepository.save(Member.builder()
@@ -139,7 +164,17 @@ class BookServiceTest {
 
     private void saveBook() {
         Book book = Book.builder()
-                .name("자바의 신")
+                .title("자바의 신")
+                .description("자바 책")
+                .author("")
+                .build();
+
+        bookRepository.save(book);
+    }
+
+    private void saveBook2() {
+        Book book = Book.builder()
+                .title("자바의 신2")
                 .description("자바 책")
                 .author("")
                 .build();

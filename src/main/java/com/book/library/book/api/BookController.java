@@ -1,5 +1,6 @@
 package com.book.library.book.api;
 
+import com.book.library.book.app.BookRentResponse;
 import com.book.library.book.app.BookRequest;
 import com.book.library.book.app.BookResponse;
 import com.book.library.book.app.BookService;
@@ -7,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api")
@@ -23,7 +26,7 @@ public class BookController {
         BookResponse bookResponse = bookService.save(request);
 
         BookResponseDto bookResponseDto = BookResponseDto.builder()
-                .name(bookResponse.name())
+                .title(bookResponse.title())
                 .author(bookResponse.author())
                 .description(bookResponse.description())
                 .build();
@@ -38,12 +41,24 @@ public class BookController {
         BookResponse bookResponse = bookService.update(id, request);
 
         BookResponseDto bookResponseDto = BookResponseDto.builder()
-                .name(bookResponse.name())
+                .title(bookResponse.title())
                 .author(bookResponse.author())
                 .description(bookResponse.description())
                 .build();
 
         return ResponseEntity.status(HttpStatus.OK).body(bookResponseDto);
+    }
+
+    @GetMapping("books/{memberId}")
+    public ResponseEntity<List<BookRentResponseDto>> getBookRentHistory(@PathVariable String memberId) {
+        List<BookRentResponse> bookRentResponses = bookService.getBookRentHistory(memberId);
+
+        System.out.println(bookRentResponses.get(0).bookTitle());
+
+        return ResponseEntity.status(HttpStatus.OK).body(
+                bookRentResponses.stream()
+                        .map(bookRentResponse -> BookRentResponseDto.toResponseDto(bookRentResponse))
+                        .toList());
     }
 
     @PostMapping("/books/{bookId}/rent")
